@@ -63,109 +63,75 @@ export default function RelatoriosPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto py-10 px-4">
-      <h1 className="text-2xl font-bold mb-6 text-blue-700">Relatórios</h1>
-      
-      {/* Resumo geral */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-bold mb-4 text-gray-800">Resumo Geral</h2>
-          <div className="space-y-3">
-            <div className="flex justify-between">
-              <span className="text-gray-500">Total de vagas ocupadas</span>
-              <span className="font-bold text-red-600">{relatorio.totalVagasOcupadas}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Setor mais ocupado</span>
-              <span className="font-bold">{relatorio.resumo.setorMaisOcupado}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Horário de pico</span>
-              <span className="font-bold">{relatorio.resumo.horaPico}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Tempo médio</span>
-              <span className="font-bold">{relatorio.resumo.tempoMedioOcupacao}</span>
-            </div>
+    <div className="container-narrow py-10">
+      <h1 className="text-3xl font-bold mb-8 heading-gradient">Relatórios</h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+        <div className="card p-6 flex flex-col gap-4">
+          <h2 className="text-lg font-semibold">Resumo Geral</h2>
+          <div className="space-y-3 text-sm">
+            <div className="flex justify-between"><span className="text-soft">Total de vagas ocupadas</span><span className="text-negative font-semibold">{relatorio.totalVagasOcupadas}</span></div>
+            <div className="flex justify-between"><span className="text-soft">Setor mais ocupado</span><span className="font-semibold">{relatorio.resumo.setorMaisOcupado}</span></div>
+            <div className="flex justify-between"><span className="text-soft">Horário de pico</span><span className="font-semibold">{relatorio.resumo.horaPico}</span></div>
+            <div className="flex justify-between"><span className="text-soft">Tempo médio</span><span className="font-semibold">{relatorio.resumo.tempoMedioOcupacao}</span></div>
           </div>
         </div>
-
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-bold mb-4 text-gray-800">Ocupações nos Últimos 7 Dias</h2>
-          <div className="space-y-2">
+        <div className="card p-6 flex flex-col gap-4">
+          <h2 className="text-lg font-semibold">Ocupações (7 dias)</h2>
+          <div className="space-y-3 text-sm">
             {relatorio.ocupacoesPorDia.map((dia, index) => (
-              <div key={index} className="flex justify-between items-center">
-                <span className="text-gray-600">{dia.data}</span>
-                <div className="flex items-center gap-2">
-                  <div className="w-16 bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="bg-blue-500 h-2 rounded-full" 
-                      style={{ width: `${(dia.ocupacoes / 36) * 100}%` }}
-                    ></div>
-                  </div>
-                  <span className="font-bold text-sm">{dia.ocupacoes}</span>
+              <div key={index} className="flex items-center gap-3">
+                <span className="w-20 text-soft">{dia.data}</span>
+                <div className="flex-1 h-2 bg-surface-alt rounded-full overflow-hidden">
+                  <div className="h-full bg-accent" style={{ width: `${(dia.ocupacoes / 36) * 100}%` }} />
                 </div>
+                <span className="w-8 text-right font-medium text-soft">{dia.ocupacoes}</span>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Tabela de veículos atualmente no estacionamento */}
-      <div className="bg-white rounded-lg shadow mb-8">
-        <div className="p-6 border-b">
-          <h2 className="text-lg font-bold text-gray-800">Veículos no Estacionamento</h2>
-        </div>
+      <div className="card mb-10 overflow-hidden">
+        <div className="p-6 border-b border-base"><h2 className="text-lg font-semibold">Veículos no Estacionamento</h2></div>
         <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50">
+          <table className="simple">
+            <thead>
               <tr>
-                <th className="py-3 px-4 text-left">Vaga</th>
-                <th className="py-3 px-4 text-left">Placa</th>
-                <th className="py-3 px-4 text-left">Modelo</th>
+                <th>Vaga</th>
+                <th>Placa</th>
+                <th>Modelo</th>
               </tr>
             </thead>
             <tbody>
               {relatorio.vagasOcupadas.map((vaga, index) => (
-                <tr key={index} className="border-t">
-                  <td className="py-2 px-4 font-medium">{vaga.numero}</td>
-                  <td className="py-2 px-4">{formatarPlaca(vaga.veiculo)}</td>
-                  <td className="py-2 px-4">{vaga.modelo}</td>
+                <tr key={index}>
+                  <td className="font-medium">{vaga.numero}</td>
+                  <td>{formatarPlaca(vaga.veiculo)}</td>
+                  <td>{vaga.modelo}</td>
                 </tr>
               ))}
             </tbody>
           </table>
           {relatorio.vagasOcupadas.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
-              Nenhum veículo no estacionamento
-            </div>
+            <div className="text-center py-8 text-soft text-sm">Nenhum veículo no estacionamento</div>
           )}
         </div>
       </div>
 
-      {/* Relatório por modelo mais populares */}
       {relatorio.relatorioModelos.length > 0 && (
-        <div className="bg-white rounded-lg shadow">
-          <div className="p-6 border-b">
-            <h2 className="text-lg font-bold text-gray-800">Modelos Mais Frequentes</h2>
-          </div>
-          <div className="p-6">
-            <div className="space-y-3">
-              {relatorio.relatorioModelos.slice(0, 5).map((item, index) => (
-                <div key={index} className="flex justify-between items-center">
-                  <span className="text-gray-700">{item.modelo}</span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-20 bg-gray-200 rounded-full h-2">
-                      <div 
-                        className="bg-green-500 h-2 rounded-full" 
-                        style={{ width: `${(item.quantidade / Math.max(...relatorio.relatorioModelos.map(m => m.quantidade))) * 100}%` }}
-                      ></div>
-                    </div>
-                    <span className="font-bold text-sm">{item.quantidade}</span>
-                  </div>
+        <div className="card p-6">
+          <h2 className="text-lg font-semibold mb-4">Modelos Mais Frequentes</h2>
+          <div className="space-y-3 text-sm">
+            {relatorio.relatorioModelos.slice(0, 5).map((item, index) => (
+              <div key={index} className="flex items-center gap-3">
+                <span className="flex-1 truncate">{item.modelo}</span>
+                <div className="w-28 h-2 bg-surface-alt rounded-full overflow-hidden">
+                  <div className="h-full bg-positive" style={{ width: `${(item.quantidade / Math.max(...relatorio.relatorioModelos.map(m => m.quantidade))) * 100}%` }} />
                 </div>
-              ))}
-            </div>
+                <span className="w-8 text-right text-soft">{item.quantidade}</span>
+              </div>
+            ))}
           </div>
         </div>
       )}
