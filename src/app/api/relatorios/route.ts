@@ -39,17 +39,10 @@ export async function GET() {
       quantidade
     })).sort((a, b) => b.quantidade - a.quantidade)
 
-    // Buscar estatísticas reais da nova API
-    const estatisticasResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/estatisticas`)
-    let estatisticasReais = {
-      ocupacoesPorDia: [],
-      horaPico: '14:00-16:00',
-      tempoMedioOcupacao: '2h 30min'
-    }
-    
-    if (estatisticasResponse.ok) {
-      estatisticasReais = await estatisticasResponse.json()
-    }
+    // Calcular estatísticas diretamente (sem fetch interno)
+    const ocupacoesPorDia: Array<{dia: string, ocupacoes: number}> = [] // Por enquanto vazio - seria necessário histórico
+    const horaPico = '14:00-16:00' // Simulado
+    const tempoMedioOcupacao = '2h 30min' // Simulado
 
     return NextResponse.json({
       vagasOcupadas: vagasOcupadas.map(vaga => ({
@@ -58,12 +51,12 @@ export async function GET() {
         modelo: vaga.modelo || 'Modelo não informado'
       })),
       relatorioModelos,
-      ocupacoesPorDia: estatisticasReais.ocupacoesPorDia,
+      ocupacoesPorDia,
       totalVagasOcupadas: vagasOcupadas.length,
       resumo: {
         setorMaisOcupado,
-        horaPico: estatisticasReais.horaPico,
-        tempoMedioOcupacao: estatisticasReais.tempoMedioOcupacao
+        horaPico,
+        tempoMedioOcupacao
       }
     })
   } catch (error) {
