@@ -116,11 +116,11 @@ export default function VagasPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto py-10 px-4">
-      <h1 className="text-2xl font-bold mb-6 text-blue-700">Gerenciar Vagas</h1>
+    <div className="container-narrow py-10">
+      <h1 className="text-3xl font-bold mb-8 heading-gradient">Gerenciar Vagas</h1>
       
       {/* Mapa gráfico 11x6 */}
-      <div className="mb-8 flex flex-col gap-2 items-center">
+      <div className="mb-10 flex flex-col gap-2 items-center card p-6">
         {linhasNumeros.map((linha) => (
           <div key={linha} className="flex gap-2">
             {[...Array(11)].map((_, idx) => {
@@ -132,32 +132,33 @@ export default function VagasPage() {
                   <div key={idx} className="relative group">
                     {vaga?.status === "Livre" ? (
                       <div
-                        className="w-16 h-16 rounded flex items-center justify-center font-bold text-white shadow cursor-pointer transition-colors bg-green-500 hover:bg-green-600"
+                        className="w-16 h-16 rounded-md flex items-center justify-center font-semibold text-positive text-sm cursor-pointer bg-surface-alt border border-base hover:bg-surface transition-colors"
                         onClick={() => vaga && handleEditVaga(vaga)}
                       >
                         {vaga.numero}
                       </div>
                     ) : (
                       <div 
-                        className="w-16 h-16 flex items-center justify-center relative cursor-pointer"
+                        className="w-16 h-16 flex items-center justify-center relative cursor-pointer bg-surface-alt rounded-md border border-base hover:bg-surface transition-colors"
                         onClick={() => vaga && handleEditVaga(vaga)}
                       >
-                        <Image src="/car.png" alt="Carro" width={64} height={64} className="object-contain" />
-                        <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-xs font-bold text-white drop-shadow">
+                        <Image src="/car.png" alt="Carro" width={48} height={48} className="object-contain opacity-90" />
+                        <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-[10px] font-semibold text-negative">
                           {vaga?.numero}
                         </span>
                       </div>
                     )}
                     {/* Tooltip */}
-                    <div className="absolute left-1/2 -translate-x-1/2 -top-12 z-10 hidden group-hover:block min-w-max bg-gray-900 text-white text-xs rounded px-3 py-1 shadow-lg whitespace-nowrap">
-                      <div><b>Vaga:</b> {vaga?.numero}</div>
-                      {vaga?.status === "Ocupada" && (
-                        <>
-                          {vaga?.modelo && <div><b>Modelo:</b> {vaga.modelo}</div>}
-                          <div><b>Placa:</b> {vaga?.veiculo ? formatarPlaca(vaga.veiculo) : "---"}</div>
-                        </>
+                    <div className="absolute left-1/2 -translate-x-1/2 -top-14 z-10 hidden group-hover:block min-w-max text-xs rounded p-3 shadow-lg whitespace-nowrap card">
+                      <div className="text-[10px] uppercase tracking-wide text-soft mb-1">Vaga {vaga?.numero}</div>
+                      {vaga?.status === "Ocupada" ? (
+                        <div className="space-y-0.5">
+                          {vaga?.modelo && <div><span className="text-soft">Modelo:</span> {vaga.modelo}</div>}
+                          <div><span className="text-soft">Placa:</span> {vaga?.veiculo ? formatarPlaca(vaga.veiculo) : "---"}</div>
+                        </div>
+                      ) : (
+                        <div className="text-positive font-medium">Disponível</div>
                       )}
-                      {vaga?.status === "Livre" && <div>Disponível</div>}
                     </div>
                   </div>
                 );
@@ -172,19 +173,18 @@ export default function VagasPage() {
 
       {/* Modal de edição */}
       {editingVaga && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg w-96">
-            <h2 className="text-xl font-bold mb-4">Editar Vaga {editingVaga.numero}</h2>
-            <div className="mb-4">
-              <p className="mb-2">Status atual: <span className={editingVaga.status === "Livre" ? "text-green-600" : "text-red-600"}>{editingVaga.status}</span></p>
-              
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="card w-full max-w-md p-6 bg-surface relative">
+            <h2 className="text-xl font-semibold mb-4">Editar Vaga {editingVaga.numero}</h2>
+            <div className="mb-5 text-sm">
+              <p className="mb-2">Status atual: <span className={editingVaga.status === "Livre" ? "text-positive" : "text-negative"}>{editingVaga.status}</span></p>
               {editingVaga.status === "Livre" ? (
-                <div className="space-y-4">
-                  <div>
-                    <label className="block mb-2 font-medium">Placa do veículo:</label>
+                <div className="space-y-5">
+                  <div className="field">
+                    <label className="text-xs font-medium uppercase tracking-wide text-soft">Placa do veículo</label>
                     <input
                       type="text"
-                      className="w-full border rounded px-3 py-2"
+                      className="input"
                       value={placaInput}
                       onChange={(e) => {
                         const valor = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
@@ -192,14 +192,14 @@ export default function VagasPage() {
                           setPlacaInput(valor);
                         }
                       }}
-                      placeholder="Ex: ABC1234 ou ABC1D23"
+                      placeholder="ABC1234 ou ABC1D23"
                       maxLength={7}
                     />
                   </div>
-                  <div>
-                    <label className="block mb-2 font-medium">Modelo do veículo:</label>
+                  <div className="field">
+                    <label className="text-xs font-medium uppercase tracking-wide text-soft">Modelo do veículo</label>
                     <select
-                      className="w-full border rounded px-3 py-2"
+                      className="select"
                       value={modeloInput}
                       onChange={(e) => setModeloInput(e.target.value)}
                     >
@@ -213,29 +213,28 @@ export default function VagasPage() {
                   </div>
                 </div>
               ) : (
-                <div className="space-y-2">
-                  {editingVaga.modelo && <p><strong>Modelo:</strong> {editingVaga.modelo}</p>}
-                  <p><strong>Placa:</strong> {editingVaga.veiculo ? formatarPlaca(editingVaga.veiculo) : "Não informada"}</p>
+                <div className="space-y-2 text-sm">
+                  {editingVaga.modelo && <p><span className="text-soft">Modelo:</span> {editingVaga.modelo}</p>}
+                  <p><span className="text-soft">Placa:</span> {editingVaga.veiculo ? formatarPlaca(editingVaga.veiculo) : "Não informada"}</p>
                 </div>
               )}
             </div>
-            
-            <div className="flex gap-2">
-              <button
-                onClick={handleSaveEdit}
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-              >
-                {editingVaga.status === "Livre" ? "Ocupar Vaga" : "Liberar Vaga"}
-              </button>
+            <div className="flex gap-3 justify-end pt-2">
               <button
                 onClick={() => {
                   setEditingVaga(null);
                   setPlacaInput("");
                   setModeloInput("");
                 }}
-                className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
+                className="btn btn-outline"
               >
                 Cancelar
+              </button>
+              <button
+                onClick={handleSaveEdit}
+                className="btn btn-accent"
+              >
+                {editingVaga.status === "Livre" ? "Ocupar Vaga" : "Liberar Vaga"}
               </button>
             </div>
           </div>
